@@ -2,8 +2,8 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define STRINGS_COUNT 5
-#define STRING_MAX_LEN 64
+#define STRS_COUNT 5
+#define STRS_MAX_LEN 64
 
 /*
     Лабораторная работа №2 - Вариант 13
@@ -11,18 +11,18 @@
 */
 
 // Объявляем прототипы функций
-void inp_str(char *string, int maxlen, int *string_len);
+int inp_str(char *string, int maxlen);
 void inp_strings(char **strings);
-void out_str(char *string, int *length, int *number);
+void out_str(char *string, int length, int number);
 void out_strings(char **strings);
-void get_spaces_count(char *string, int *spaces_count);
+int get_spaces_count(char *string);
 void sort_strings_by_spaces_count(char **strings, int strings_count);
 void free_memory(char **strings);
 
 int main() {
   // Инициализируем массив указателей на строки
   // и запрашиваем их ввод у пользователя
-  char *strings[STRINGS_COUNT];
+  char *strings[STRS_COUNT];
   inp_strings(strings);
 
   // Выводим введенные пользователем строки
@@ -30,7 +30,7 @@ int main() {
   out_strings(strings);
 
   // Сортируем их согласно таблице 2.2 вариант 13
-  sort_strings_by_spaces_count(strings, STRINGS_COUNT);
+  sort_strings_by_spaces_count(strings, STRS_COUNT);
 
   // Выводим отсортированные строки
   printf("\nПосле сортировки:\n");
@@ -43,7 +43,7 @@ int main() {
 }
 
 // Ввод строки
-void inp_str(char *string, int maxlen, int *string_len) {
+int inp_str(char *string, int maxlen) {
   /*
     char *string: указатель, куда считать строку
     int maxlen:   максимальная длина вводимой строки
@@ -58,40 +58,39 @@ void inp_str(char *string, int maxlen, int *string_len) {
   // на его место вставляем символ конца строки (\0)
   string[strcspn(string, "\n")] = '\0';
 
-  *string_len = strlen(string);
+  return strlen(string);
 }
 
-// Ввод STRINGS_COUNT строк в виде указателей на строки
+// Ввод STRS_COUNT строк в виде указателей на строки
 void inp_strings(char **strings) {
   /*
     char **strings: массив строк
   */
 
-  for (int i = 0; i < STRINGS_COUNT; i++) {
+  for (int i = 0; i < STRS_COUNT; i++) {
 
     // Выделяем память для строки
-    strings[i] = (char *)malloc(STRING_MAX_LEN * sizeof(char));
+    strings[i] = (char *)malloc(STRS_MAX_LEN * sizeof(char));
     if (strings[i] == NULL) {
       printf("Ошибка выделения памяти\n");
       exit(1);
     }
 
     // Считываем ее и выводим в консоль ее длину
-    int length;
-    inp_str(strings[i], STRING_MAX_LEN, &length);
+    int length = inp_str(strings[i], STRS_MAX_LEN);
     printf("Длина введенной строки: %d\n", length);
   }
 }
 
 // Вывод в консоль строки, ее длины и порядкового номера
-void out_str(char *string, int *length, int *number) {
+void out_str(char *string, int length, int number) {
   /*
     char *string: указатель на строку
     int length:   длина строки
     int number:   порядковый номер строки
   */
 
-  printf("%d) [длина строки = %d] \"%s\"\n", *number, *length, string);
+  printf("%d) [длина строки = %d] \"%s\"\n", number, length, string);
 }
 
 // Вывод в консоль всех строк
@@ -100,15 +99,13 @@ void out_strings(char **strings) {
     char **strings: массив строк
   */
 
-  for (int i = 0; i < STRINGS_COUNT; i++) {
-    int length = strlen(strings[i]);
-    int number = i + 1;
-    out_str(strings[i], &length, &number);
+  for (int i = 0; i < STRS_COUNT; i++) {
+    out_str(strings[i], strlen(strings[i]), i + 1);
   }
 }
 
 // Получение количества пробелов в строке
-void get_spaces_count(char *string, int *spaces_count) {
+int get_spaces_count(char *string) {
   /*
     char *string: указатель на строку
   */
@@ -121,7 +118,7 @@ void get_spaces_count(char *string, int *spaces_count) {
     }
   }
 
-  *spaces_count = count;
+  return count;
 }
 
 // Сортировка строк по возрастанию количества пробелов
@@ -129,7 +126,7 @@ void get_spaces_count(char *string, int *spaces_count) {
 void sort_strings_by_spaces_count(char **strings, int strings_count) {
   /*
     char **strings:    массив строк
-    int strings_count: его размерность
+    int STRS_COUNT: его размерность
   */
 
   int swaps_count = 0;
@@ -138,11 +135,8 @@ void sort_strings_by_spaces_count(char **strings, int strings_count) {
   for (int i = 0; i < strings_count - 1; i++) {
     for (int j = i + 1; j < strings_count; j++) {
 
-      int str_i_spaces_count;
-      get_spaces_count(strings[i], &str_i_spaces_count);
-
-      int str_j_spaces_count;
-      get_spaces_count(strings[j], &str_j_spaces_count);
+      int str_i_spaces_count = get_spaces_count(strings[i]);
+      int str_j_spaces_count = get_spaces_count(strings[j]);
 
       if (str_i_spaces_count > max_spaces_count) {
         max_spaces_count = str_i_spaces_count;
@@ -171,7 +165,7 @@ void free_memory(char **strings) {
     char **strings: массив строк
   */
 
-  for (int i = 0; i < STRINGS_COUNT; i++) {
+  for (int i = 0; i < STRS_COUNT; i++) {
     free(strings[i]);
   }
 }
