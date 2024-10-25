@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 
   // Проверяем количество аргументов на корректность
   if (argc != 3) {
-    printf("Использование: ./main input.txt s\n");
+    printf("Использование: ./main input.txt zx\n");
     exit(0);
   }
 
