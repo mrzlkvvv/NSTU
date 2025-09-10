@@ -1,13 +1,10 @@
 .SILENT:
 
-run: build
-	./bin/main
-
-build:
+run_and_clean:
+	mkdir ./bin/
 	gcc main.c -o ./bin/main
-
-clean:
+	./bin/main test.txt 5
 	rm -rf ./bin/
 
 format:
-	clang-format --style=Microsoft -i ./main.c
+	clang-format -i ./main.c
