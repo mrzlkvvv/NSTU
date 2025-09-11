@@ -55,18 +55,18 @@ void processFile(char *filename, int replacesCount) {
 
   // Формируем имя временного файла ("<filename>.processed")
   size_t len = strlen(filename) + 11;
-  char *tempFilename = malloc(len);
-  if (tempFilename == NULL) {
-    printf("Error allocating memory for tempFilename\n");
+  char *outputFilename = malloc(len);
+  if (outputFilename == NULL) {
+    printf("Error allocating memory for outputFilename\n");
     exit(-4);
   }
-  snprintf(tempFilename, len, "%s.processed", filename);
+  snprintf(outputFilename, len, "%s.processed", filename);
 
   // Открываем временный файл на запись
   int openFlags = O_CREAT | O_WRONLY | O_TRUNC;
   mode_t filePerms = S_IRUSR | S_IWUSR | S_IRGRP | S_IWGRP | S_IROTH | S_IWOTH; /* rw - rw - rw - */
 
-  int outputHandle = open(tempFilename, openFlags, filePerms);
+  int outputHandle = open(outputFilename, openFlags, filePerms);
   if (outputHandle < 0) {
     printf("Error %d (%s) while open file: %s\n", errno, strerror(errno), filename);
     exit(-5);
@@ -98,6 +98,11 @@ void processFile(char *filename, int replacesCount) {
     }
   }
 
-  close(outputHandle);
-  close(inputHandle);
+  if (close(outputHandle) == -1) {
+      printf("Error %d (%s) while closing file: %s\n", errno, strerror(errno), outputFilename);
+  }
+
+  if (close(inputHandle) == -1) {
+      printf("Error %d (%s) while closing file: %s\n", errno, strerror(errno), filename);
+  }
 }
